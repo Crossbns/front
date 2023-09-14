@@ -2,14 +2,26 @@ import React, {useEffect, useState} from 'react'
 import axios from 'axios'
 import { BsCircleFill, BsFillCheckCircleFill, BsFillTrashFill } from 'react-icons/bs';
 
-function Create() {
+const API_URL = 'https://server-fqc9.onrender.com';
+
+function Create({ onAdd }) {
   const [task, setTask] = useState()
   const handleAdd = () => {
-    axios.post('http://localhost:3001/add', {task: task})
-    .then(result => {
-      location.reload()
-    })
-    .catch(err => console.log(err))
+    if (task && task.trim().length > 0) { // Verifica si la tarea no está vacía
+      axios.post(`${API_URL}/add`, {task: task})
+      .then(result => {
+        onAdd(result.data);
+      })
+      .catch(err => {
+        if (err.code === 'ECONNABORTED') {
+          console.log('La solicitud se ha agotado');
+        } else {
+          console.log(err);
+        }
+      })
+    } else {
+      alert('Por favor, ingresa una tarea válida.'); // Muestra un mensaje si la tarea está vacía
+    }
   }
   return (
     <div className="create_form">
@@ -23,33 +35,49 @@ function Tasks() {
   const [todos, setTodos] = useState ([])
 
   useEffect(() => {
-    axios.get('http://localhost:3001/get')
+    axios.get(`${API_URL}/get`)
     .then(result => setTodos(result.data))
     .catch(err => console.log(err))
   }, [])
 
+  const handleAdd = (todo) => {
+    setTodos([...todos, todo]);
+  }
+
   const handleEdit = (id) => {
-    axios.put('http://localhost:3001/update/'+id)
+    axios.put(`${API_URL}/update/${id}`)
     .then(result => {
-      location.reload()
+      setTodos(todos.map(todo => todo._id === id ? {...todo, done: true} : todo));
     })
-    .catch(err => console.log(err))
+    .catch(err => {
+      if (err.code === 'ECONNABORTED') {
+        console.log('La solicitud se ha agotado');
+      } else {
+        console.log(err);
+      }
+    })
   }
 
   const handleDelete = (id) => {
-    axios.delete('http://localhost:3001/delete/'+id)
+    axios.delete(`${API_URL}/delete/${id}`)
     .then(result => {
-      location.reload()
+      setTodos(todos.filter(todo => todo._id !== id));
     })
-    .catch(err => console.log(err))
+    .catch(err => {
+      if (err.code === 'ECONNABORTED') {
+        console.log('La solicitud se ha agotado');
+      } else {
+        console.log(err);
+      }
+    })
   }
-
   
   return (
     <div className="home">
       <h2>Tareas</h2>
-      <Create />
+      <Create onAdd={handleAdd} />
       <div className="task-container">
+        {console.log(todos)} {/* Verificar el estado de todos antes de mapearlo */}
         {todos.length === 0 ? (
           <div>
             <h2>Sin registro</h2>
@@ -80,8 +108,5 @@ function Tasks() {
       </div>
     </div>
   );
-  
-
 }
-
 export default Tasks;

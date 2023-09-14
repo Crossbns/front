@@ -2,14 +2,26 @@ import React, {useEffect, useState} from 'react'
 import axios from 'axios'
 import { BsCircleFill, BsFillCheckCircleFill, BsFillTrashFill } from 'react-icons/bs';
 
-function CreateDaylies() {
+const API_URL = 'https://server-fqc9.onrender.com';
+
+function CreateDaylies({ onAdd }) {
   const [Daylies, setDaylies] = useState()
   const handleAdd = () => {
-    axios.post('http://localhost:3001/add-Daylies', {Daylies: Daylies})
-    .then(result => {
-      location.reload()
-    })
-    .catch(err => console.log(err))
+    if (Daylies && Daylies.trim().length > 0) { // Verifica si el pendiente no está vacío
+      axios.post(`${API_URL}/add-Daylies`, {Daylies: Daylies})
+      .then(result => {
+        onAdd(result.data);
+      })
+      .catch(err => {
+        if (err.code === 'ECONNABORTED') {
+          console.log('La solicitud se ha agotado');
+        } else {
+          console.log(err);
+        }
+      })
+    } else {
+      alert('Por favor, ingresa un pendiente válido.'); // Muestra un mensaje si el pendiente está vacío
+    }
   }
   return (
     <div className="create_form">
@@ -23,48 +35,64 @@ function Daylies() {
   const [Daylies, setDaylies] = useState ([])
 
   useEffect(() => {
-    axios.get('http://localhost:3001/get-Daylies')
+    axios.get(`${API_URL}/get-Daylies`)
     .then(result => setDaylies(result.data))
     .catch(err => console.log(err))
   }, [])
 
+  const handleAdd = (Daylie) => {
+    setDaylies([...Daylies, Daylie]);
+  }
+
   const handleEdit = (id) => {
-    axios.put(`http://localhost:3001/update-Daylies/${id}`)
+    axios.put(`${API_URL}/update-Daylies/${id}`)
     .then(result => {
-      location.reload()
+      setDaylies(Daylies.map(Daylie => Daylie._id === id ? {...Daylie, done: true} : Daylie));
     })
-    .catch(err => console.log(err))
+    .catch(err => {
+      if (err.code === 'ECONNABORTED') {
+        console.log('La solicitud se ha agotado');
+      } else {
+        console.log(err);
+      }
+    })
   }
 
   const handleDelete = (id) => {
-    axios.delete(`http://localhost:3001/delete-Daylies/${id}`)
+    axios.delete(`${API_URL}/delete-Daylies/${id}`)
     .then(result => {
-      location.reload()
+      setDaylies(Daylies.filter(Daylie => Daylie._id !== id));
     })
-    .catch(err => console.log(err))
+    .catch(err => {
+      if (err.code === 'ECONNABORTED') {
+        console.log('La solicitud se ha agotado');
+      } else {
+        console.log(err);
+      }
+    })
   }
   
   return (
     <div className="home">
       <h2>Pendientes</h2>
-      <CreateDaylies />
+      <CreateDaylies onAdd={handleAdd} />
       <div className="task-container"> 
       {
       Daylies.length === 0 
       ?
       <div><h2>Sin registro</h2></div>
       :
-      Daylies.map(Daylies => (
-        <div key={Daylies._id} className='task'>
-          <div className='checkbox' onClick={() => handleEdit(Daylies._id)}>
-          {Daylies.done ? <BsFillCheckCircleFill className='icon'></BsFillCheckCircleFill>
+      Daylies.map(Daylie => (
+        <div key={Daylie._id} className='task'>
+          <div className='checkbox' onClick={() => handleEdit(Daylie._id)}>
+          {Daylie.done ? <BsFillCheckCircleFill className='icon'></BsFillCheckCircleFill>
           :<BsCircleFill className='icon'/>
           }
-          <p className={Daylies.done ? "line_through": ""}>{Daylies.name}</p>
+          <p className={Daylie.done ? "line_through": ""}>{Daylie.name}</p>
           </div>
           <div>
             <span><BsFillTrashFill className='icon' 
-            onClick={()=>handleDelete(Daylies._id)}/></span>
+            onClick={()=>handleDelete(Daylie._id)}/></span>
           </div>
         </div>
       ))
