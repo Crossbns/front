@@ -1,7 +1,7 @@
 function Footer() {
     return (
       <footer>
-        <p>Derechos reservados © César Márquez</p>
+        <p>All rights reserved © César Márquez</p>
       </footer>
     )
   }

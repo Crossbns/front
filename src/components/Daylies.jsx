@@ -14,19 +14,19 @@ function CreateDaylies({ onAdd }) {
       })
       .catch(err => {
         if (err.code === 'ECONNABORTED') {
-          console.log('La solicitud se ha agotado');
+          console.log('Request has been exhausted');
         } else {
           console.log(err);
         }
       })
     } else {
-      alert('Por favor, ingresa un pendiente válido.'); // Muestra un mensaje si el pendiente está vacío
+      alert('Enter a valid daily.'); // Muestra un mensaje si el pendiente está vacío
     }
   }
   return (
     <div className="create_form">
-        <input type="text" placeholder='Ingresa un Pendiente' onChange={(e) => setDaylies(e.target.value)}/> 
-        <button type="button" onClick={handleAdd}>Agregar</button>
+        <input type="text" placeholder='Add a daily' onChange={(e) => setDaylies(e.target.value)}/> 
+        <button type="button" onClick={handleAdd}>Add</button>
     </div>
   )
 }
@@ -51,7 +51,7 @@ function Daylies() {
     })
     .catch(err => {
       if (err.code === 'ECONNABORTED') {
-        console.log('La solicitud se ha agotado');
+        console.log('Request has been exhausted');
       } else {
         console.log(err);
       }
@@ -65,7 +65,7 @@ function Daylies() {
     })
     .catch(err => {
       if (err.code === 'ECONNABORTED') {
-        console.log('La solicitud se ha agotado');
+        console.log('Request has been exhausted');
       } else {
         console.log(err);
       }
@@ -74,13 +74,13 @@ function Daylies() {
   
   return (
     <div className="home">
-      <h2>Pendientes</h2>
+      <h2>Daylies</h2>
       <CreateDaylies onAdd={handleAdd} />
       <div className="task-container"> 
       {
       Daylies.length === 0 
       ?
-      <div><h2>Sin registro</h2></div>
+      <div><h2>No Logs</h2></div>
       :
       Daylies.map(Daylie => (
         <div key={Daylie._id} className='task'>

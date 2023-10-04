@@ -14,19 +14,19 @@ function CreateHabit({ onAdd }) {
       })
       .catch(err => {
         if (err.code === 'ECONNABORTED') {
-          console.log('La solicitud se ha agotado');
+          console.log('Request has been exhausted');
         } else {
           console.log(err);
         }
       })
     } else {
-      alert('Por favor, ingresa un hábito válido.'); // Muestra un mensaje si el hábito está vacío
+      alert('Enter a valid habit.'); // Muestra un mensaje si el hábito está vacío
     }
   }
   return (
     <div className="create_form">
-        <input type="text" placeholder='Ingresa un Hábito' onChange={(e) => setHabit(e.target.value)}/> 
-        <button type="button" onClick={handleAdd}>Agregar</button>
+        <input type="text" placeholder='Add an habit' onChange={(e) => setHabit(e.target.value)}/> 
+        <button type="button" onClick={handleAdd}>Add</button>
     </div>
   )
 }
@@ -51,7 +51,7 @@ function Habits() {
     })
     .catch(err => {
       if (err.code === 'ECONNABORTED') {
-        console.log('La solicitud se ha agotado');
+        console.log('Request has been exhausted');
       } else {
         console.log(err);
       }
@@ -65,7 +65,7 @@ function Habits() {
     })
     .catch(err => {
       if (err.code === 'ECONNABORTED') {
-        console.log('La solicitud se ha agotado');
+        console.log('Request has been exhausted');
       } else {
         console.log(err);
       }
@@ -74,13 +74,13 @@ function Habits() {
   
   return (
     <div className="home">
-      <h2>Hábitos</h2>
+      <h2>Habits</h2>
       <CreateHabit onAdd={handleAdd} />
       <div className="task-container">
       {
       habits.length === 0 
       ?
-      <div><h2>Sin registro</h2></div>
+      <div><h2>No Logs</h2></div>
       :
       habits.map(habit => (
         <div key={habit._id} className='task'>

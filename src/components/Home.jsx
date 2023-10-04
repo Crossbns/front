@@ -14,19 +14,19 @@ function Create({ onAdd }) {
       })
       .catch(err => {
         if (err.code === 'ECONNABORTED') {
-          console.log('La solicitud se ha agotado');
+          console.log('Request has been exhausted');
         } else {
           console.log(err);
         }
       })
     } else {
-      alert('Por favor, ingresa una tarea válida.'); // Muestra un mensaje si la tarea está vacía
+      alert('Enter a valid task.'); // Muestra un mensaje si la tarea está vacía
     }
   }
   return (
     <div className="create_form">
-        <input type="text" placeholder='Ingresa una Tarea' onChange={(e) => setTask(e.target.value)}/> 
-        <button type="button" onClick={handleAdd}>Agregar</button>
+        <input type="text" placeholder='Add a task' onChange={(e) => setTask(e.target.value)}/> 
+        <button type="button" onClick={handleAdd}>Add</button>
     </div>
   )
 }
@@ -51,7 +51,7 @@ function Tasks() {
     })
     .catch(err => {
       if (err.code === 'ECONNABORTED') {
-        console.log('La solicitud se ha agotado');
+        console.log('Request has been exhausted');
       } else {
         console.log(err);
       }
@@ -65,7 +65,7 @@ function Tasks() {
     })
     .catch(err => {
       if (err.code === 'ECONNABORTED') {
-        console.log('La solicitud se ha agotado');
+        console.log('Request has been exhausted');
       } else {
         console.log(err);
       }
@@ -74,13 +74,13 @@ function Tasks() {
   
   return (
     <div className="home">
-      <h2>Tareas</h2>
+      <h2>To Do</h2>
       <Create onAdd={handleAdd} />
       <div className="task-container">
         {console.log(todos)} {/* Verificar el estado de todos antes de mapearlo */}
         {todos.length === 0 ? (
           <div>
-            <h2>Sin registro</h2>
+            <h2>No Logs</h2>
           </div>
         ) : (
           todos.map((todo) => (
