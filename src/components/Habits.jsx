@@ -1,28 +1,28 @@
-import React, {useEffect, useState} from 'react'
-import axios from 'axios'
-import { BsCircleFill, BsFillCheckCircleFill, BsFillTrashFill } from 'react-icons/bs';
+import React, {useEffect, useState} from 'react' // Importing React and hooks from 'react'
+import axios from 'axios' // Importing axios for making HTTP requests
+import { BsCircleFill, BsFillCheckCircleFill, BsFillTrashFill } from 'react-icons/bs'; // Importing icons from 'react-icons/bs'
 
-const API_URL = 'https://server-fqc9.onrender.com';
+const API_URL = 'https://server-fqc9.onrender.com'; // API base URL
 
+// Component for creating a new habit
 function CreateHabit({ onAdd }) {
-  const [habit, setHabit] = useState()
+  const [habit, setHabit] = useState() // State for the new habit
+
+  // Function to handle adding a new habit
   const handleAdd = () => {
-    if (habit && habit.trim().length > 0) { // Verifica si el hábito no está vacío
-      axios.post(`${API_URL}/add-habit`, {habit: habit})
+    if (habit && habit.trim().length > 0) { // Check if the habit is not empty
+      axios.post(`${API_URL}/add-habit`, {habit: habit}) // Send a POST request to add the habit
       .then(result => {
-        onAdd(result.data);
+        onAdd(result.data); // Update the parent component with the new habit
       })
       .catch(err => {
-        if (err.code === 'ECONNABORTED') {
-          console.log('Request has been exhausted');
-        } else {
-          console.log(err);
-        }
+        console.log(err); // Handle errors
       })
     } else {
-      alert('Enter a valid habit.'); // Muestra un mensaje si el hábito está vacío
+      alert('Enter a valid habit.'); // Show an alert if the habit is empty
     }
   }
+
   return (
     <div className="create_form">
         <input type="text" placeholder='Add an habit' onChange={(e) => setHabit(e.target.value)}/> 
@@ -31,44 +31,37 @@ function CreateHabit({ onAdd }) {
   )
 }
 
+// Component for displaying and managing habits
 function Habits() {
-  const [habits, setHabits] = useState ([])
+  const [habits, setHabits] = useState ([]) // State for the list of habits
 
-  useEffect(() => {
+  useEffect(() => { // Fetch habits when the component mounts
     axios.get(`${API_URL}/get-habits`)
-    .then(result => setHabits(result.data))
-    .catch(err => console.log(err))
+    .then(result => setHabits(result.data)) // Update the state with the fetched habits
+    .catch(err => console.log(err)) // Handle errors
   }, [])
 
-  const handleAdd = (habit) => {
+  const handleAdd = (habit) => { // Function to handle adding a new habit to the list
     setHabits([...habits, habit]);
   }
 
-  const handleEdit = (id) => {
-    axios.put(`${API_URL}/update-habit/${id}`)
+  const handleEdit = (id) => { // Function to handle editing a habit
+    axios.put(`${API_URL}/update-habit/${id}`) // Send a PUT request to update the habit
     .then(result => {
-      setHabits(habits.map(habit => habit._id === id ? {...habit, done: true} : habit));
+      setHabits(habits.map(habit => habit._id === id ? {...habit, done: true} : habit)); // Update the state with the updated habit
     })
     .catch(err => {
-      if (err.code === 'ECONNABORTED') {
-        console.log('Request has been exhausted');
-      } else {
-        console.log(err);
-      }
+      console.log(err); // Handle errors
     })
   }
 
-  const handleDelete = (id) => {
-    axios.delete(`${API_URL}/delete-habit/${id}`)
+  const handleDelete = (id) => { // Function to handle deleting a habit
+    axios.delete(`${API_URL}/delete-habit/${id}`) // Send a DELETE request to delete the habit
     .then(result => {
-      setHabits(habits.filter(habit => habit._id !== id));
+      setHabits(habits.filter(habit => habit._id !== id)); // Update the state by removing the deleted habit
     })
     .catch(err => {
-      if (err.code === 'ECONNABORTED') {
-        console.log('Request has been exhausted');
-      } else {
-        console.log(err);
-      }
+      console.log(err); // Handle errors
     })
   }
   
@@ -102,4 +95,4 @@ function Habits() {
   )
 }
 
-export default Habits;
+export default Habits; // Exporting the Habits component as default

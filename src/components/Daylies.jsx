@@ -1,28 +1,28 @@
-import React, {useEffect, useState} from 'react'
-import axios from 'axios'
-import { BsCircleFill, BsFillCheckCircleFill, BsFillTrashFill } from 'react-icons/bs';
+import React, {useEffect, useState} from 'react' // Importing React and hooks from 'react'
+import axios from 'axios' // Importing axios for making HTTP requests
+import { BsCircleFill, BsFillCheckCircleFill, BsFillTrashFill } from 'react-icons/bs'; // Importing icons from 'react-icons/bs'
 
-const API_URL = 'https://server-fqc9.onrender.com';
+const API_URL = 'https://server-fqc9.onrender.com'; // API base URL
 
+// Component for creating a new daily task
 function CreateDaylies({ onAdd }) {
-  const [Daylies, setDaylies] = useState()
+  const [Daylies, setDaylies] = useState() // State for the new daily task
+
+  // Function to handle adding a new daily task
   const handleAdd = () => {
-    if (Daylies && Daylies.trim().length > 0) { // Verifica si el pendiente no está vacío
-      axios.post(`${API_URL}/add-Daylies`, {Daylies: Daylies})
+    if (Daylies && Daylies.trim().length > 0) { // Check if the daily task is not empty
+      axios.post(`${API_URL}/add-Daylies`, {Daylies: Daylies}) // Send a POST request to add the daily task
       .then(result => {
-        onAdd(result.data);
+        onAdd(result.data); // Update the parent component with the new daily task
       })
       .catch(err => {
-        if (err.code === 'ECONNABORTED') {
-          console.log('Request has been exhausted');
-        } else {
-          console.log(err);
-        }
+        console.log(err); // Handle errors
       })
     } else {
-      alert('Enter a valid daily.'); // Muestra un mensaje si el pendiente está vacío
+      alert('Enter a valid daily.'); // Show an alert if the daily task is empty
     }
   }
+
   return (
     <div className="create_form">
         <input type="text" placeholder='Add a daily' onChange={(e) => setDaylies(e.target.value)}/> 
@@ -31,44 +31,37 @@ function CreateDaylies({ onAdd }) {
   )
 }
 
+// Component for displaying and managing daily tasks
 function Daylies() {
-  const [Daylies, setDaylies] = useState ([])
+  const [Daylies, setDaylies] = useState ([]) // State for the list of daily tasks
 
-  useEffect(() => {
+  useEffect(() => { // Fetch daily tasks when the component mounts
     axios.get(`${API_URL}/get-Daylies`)
-    .then(result => setDaylies(result.data))
-    .catch(err => console.log(err))
+    .then(result => setDaylies(result.data)) // Update the state with the fetched daily tasks
+    .catch(err => console.log(err)) // Handle errors
   }, [])
 
-  const handleAdd = (Daylie) => {
+  const handleAdd = (Daylie) => { // Function to handle adding a new daily task to the list
     setDaylies([...Daylies, Daylie]);
   }
 
-  const handleEdit = (id) => {
-    axios.put(`${API_URL}/update-Daylies/${id}`)
+  const handleEdit = (id) => { // Function to handle editing a daily task
+    axios.put(`${API_URL}/update-Daylies/${id}`) // Send a PUT request to update the daily task
     .then(result => {
-      setDaylies(Daylies.map(Daylie => Daylie._id === id ? {...Daylie, done: true} : Daylie));
+      setDaylies(Daylies.map(Daylie => Daylie._id === id ? {...Daylie, done: true} : Daylie)); // Update the state with the updated daily task
     })
     .catch(err => {
-      if (err.code === 'ECONNABORTED') {
-        console.log('Request has been exhausted');
-      } else {
-        console.log(err);
-      }
+      console.log(err); // Handle errors
     })
   }
 
-  const handleDelete = (id) => {
-    axios.delete(`${API_URL}/delete-Daylies/${id}`)
+  const handleDelete = (id) => { // Function to handle deleting a daily task
+    axios.delete(`${API_URL}/delete-Daylies/${id}`) // Send a DELETE request to delete the daily task
     .then(result => {
-      setDaylies(Daylies.filter(Daylie => Daylie._id !== id));
+      setDaylies(Daylies.filter(Daylie => Daylie._id !== id)); // Update the state by removing the deleted daily task
     })
     .catch(err => {
-      if (err.code === 'ECONNABORTED') {
-        console.log('Request has been exhausted');
-      } else {
-        console.log(err);
-      }
+      console.log(err); // Handle errors
     })
   }
   
@@ -102,4 +95,4 @@ function Daylies() {
   )
 }
 
-export default Daylies;
+export default Daylies; // Exporting the Daylies component as default
