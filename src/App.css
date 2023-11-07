@@ -13,8 +13,13 @@ body {
 
 .form-container {
     display: flex;
-    flex-grow: 1;
+    flex-direction: column; /* Asegura que los formularios se apilen verticalmente */
+    justify-content: center; /* Centra los formularios verticalmente */
+    align-items: center; /* Centra los formularios horizontalmente */
+    height: 100%; /* Necesario para que justify-content funcione correctamente */
 }
+
+
 
 .home {
     padding: 20px;
